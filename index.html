@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolanews - Portal Berita & Skor Sepak Bola</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-base font-black tracking-wider uppercase text-emerald-400">⚡ Bolanews <span class="text-xs text-slate-400 font-normal">by Amsal</span></h1>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">Live Update</span>
+        </div>
+        
+        <!-- Menu Filter Liga Lengkap -->
+        <div class="max-w-md mx-auto px-4 flex space-x-2 pb-3 overflow-x-auto scrollbar-none">
+            <button onclick="filterLeague('all', this)" class="league-btn bg-emerald-500 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap shadow">Semua</button>
+            <button onclick="filterLeague('ucl', this)" class="league-btn bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">🏆 UCL</button>
+            <button onclick="filterLeague('epl', this)" class="league-btn bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">🇬🇧 Premier League</button>
+            <button onclick="filterLeague('laliga', this)" class="league-btn bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">🇪🇸 La Liga</button>
+            <button onclick="filterLeague('seriea', this)" class="league-btn bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">🇮🇹 Serie A</button>
+            <button onclick="filterLeague('bundesliga', this)" class="league-btn bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">🇩🇪 Bundesliga</button>
+            <button onclick="filterLeague('ligue1', this)" class="league-btn bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">🇫🇷 Ligue 1</button>
+            <button onclick="filterLeague('unl', this)" class="league-btn bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">🌍 UEFA Nations League</button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 py-4 flex-1 space-y-6 w-full">
+        <section class="space-y-3">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Skor & Pertandingan Terkini
+            </h2>
+            <div id="matches-container" class="space-y-3"></div>
+        </section>
+
+        <section class="space-y-3 pt-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">🔥 Berita & Analisis Utama</h2>
+            <div id="news-container" class="space-y-3"></div>
+        </section>
+    </main>
+
+    <footer class="text-center py-4 text-[11px] text-slate-600 border-t border-slate-900">
+        <p>&copy; 2026 Bolanews. Crafted with 🔥 by Amsal</p>
+    </footer>
+
+    <script>
+        const matchesData = [
+            { league: "ucl", leagueName: "🏆 UEFA Champions League", home: "Real Madrid", homeScore: "3", away: "Bayern Munich", awayScore: "2", status: "FT", time: "Babak Perempat Final" },
+            { league: "epl", leagueName: "🇬🇧 Premier League", home: "Arsenal", homeScore: "2", away: "Manchester City", awayScore: "2", status: "LIVE", time: "85'" },
+            { league: "laliga", leagueName: "🇪🇸 La Liga", home: "Barcelona", homeScore: "4", away: "Atletico Madrid", awayScore: "1", status: "FT", time: "Jornada 30" },
+            { league: "seriea", leagueName: "🇮🇹 Serie A", home: "Inter Milan", homeScore: "1", away: "Juventus", awayScore: "0", status: "FT", time: "Derby d'Italia" },
+            { league: "bundesliga", leagueName: "🇩🇪 Bundesliga", home: "Bayer Leverkusen", homeScore: "2", away: "Dortmund", awayScore: "2", status: "LIVE", time: "67'" },
+            { league: "ligue1", leagueName: "🇫🇷 Ligue 1", home: "PSG", homeScore: "3", away: "Monaco", awayScore: "1", status: "FT", time: "Pekan 28" },
+            { league: "unl", leagueName: "🌍 UEFA Nations League (Grup A1)", home: "Portugal", homeScore: "2", away: "Kroasia", awayScore: "1", status: "FT", time: "Fase Grup" },
+            { league: "unl", leagueName: "🌍 UEFA Nations League (Grup A3)", home: "Jerman", homeScore: "1", away: "Belanda", awayScore: "1", status: "FT", time: "Fase Grup" }
+        ];
+
+        const newsData = [
+            { league: "ucl", title: "Drama 5 Gol di Bernabeu: Real Madrid Amankan Leg Pertama", snippet: "Laga sarat gengsi di Liga Champions menyajikan permainan menyerang tingkat tinggi.", time: "1 jam lalu" },
+            { league: "epl", title: "Peta Juara Premier League Memanas Usai Imbang di Emirates", snippet: "Arsenal dan Man City harus berbagi angka dalam duel penentuan gelar musim ini.", time: "3 jam lalu" },
+            { league: "laliga", title: "Barcelona Tampil Pesta Gol ke Gawang Atletico", snippet: "Lini serang Blaugrana tampil sangat tajam dan mendominasi jalannya pertandingan.", time: "5 jam lalu" },
+            { league: "unl", title: "Persaingan Ketat Grup UEFA Nations League Menuju Babak Final", snippet: "Tim-tim unggulan Eropa berjuang keras mengamankan posisi puncak klasemen grup masing-masing.", time: "7 jam lalu" }
+        ];
+
+        function renderMatches(filter = 'all') {
+            const container = document.getElementById("matches-container");
+            container.innerHTML = "";
+            const filtered = filter === 'all' ? matchesData : matchesData.filter(m => m.league === filter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Belum ada jadwal pertandingan untuk liga ini.</p>`;
+                return;
+            }
+
+            filtered.forEach(match => {
+                const isLive = match.status === "LIVE";
+                const statusBadge = isLive ? `<span class="text-emerald-400 font-bold animate-pulse text-xs">LIVE ${match.time}</span>` : `<span class="text-slate-400 font-semibold text-xs">${match.status}</span>`;
+
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center text-[11px] text-slate-500">
+                            <span class="font-medium">${match.leagueName}</span>
+                            ${statusBadge}
+                        </div>
+                        <div class="flex justify-between items-center py-1">
+                            <div class="w-2/5 text-left"><p class="font-bold text-xs truncate">${match.home}</p></div>
+                            <div class="w-1/5 text-center bg-slate-950 py-1 rounded-lg border border-slate-800">
+                                <span class="text-sm font-black tracking-widest">${match.homeScore} - ${match.awayScore}</span>
+                            </div>
+                            <div class="w-2/5 text-right"><p class="font-bold text-xs truncate">${match.away}</p></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderNews(filter = 'all') {
+            const container = document.getElementById("news-container");
+            container.innerHTML = "";
+            const filtered = filter === 'all' ? newsData : newsData.filter(n => n.league === filter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Belum ada berita terkait.</p>`;
+                return;
+            }
+
+            filtered.forEach(news => {
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-sm">
+                        <div class="flex justify-between items-center text-[10px] text-slate-500">
+                            <span class="uppercase font-bold text-emerald-500/80">${news.league}</span>
+                            <span>${news.time}</span>
+                        </div>
+                        <h3 class="text-xs font-bold text-slate-200 leading-snug">${news.title}</h3>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">${news.snippet}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function filterLeague(leagueKey, buttonElement) {
+            document.querySelectorAll(".league-btn").forEach(btn => {
+                btn.classList.remove("bg-emerald-500", "text-slate-950");
+                btn.classList.add("bg-slate-800", "text-slate-300");
+            });
+            buttonElement.classList.remove("bg-slate-800", "text-slate-300");
+            buttonElement.classList.add("bg-emerald-500", "text-slate-950");
+
+            renderMatches(leagueKey);
+            renderNews(leagueKey);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMatches('all');
+            renderNews('all');
+        });
+    </script>
+</body>
+              </html>
+              
